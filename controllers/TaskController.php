@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Task;
 use yii\web\Controller;
 
 /**
@@ -45,12 +46,7 @@ class TaskController extends Controller
 {
     public function actionIndex()
     {
-        // Pasar elementos a la vista
-        $tasks = [
-            "Comprar leche",
-            "Estudiar Yii",
-            "Hacer ejercicio"
-        ];
+        $tasks = Task::find()->all();
 
         return $this->render('index', [
             'tasks' => $tasks
