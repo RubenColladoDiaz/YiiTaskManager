@@ -51,7 +51,8 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                'home/tasks' => 'task/index',
+                // La URL "task/index" se puede usar para acceder a la acción index del TaskController
+                'tasks' => 'task/index',
             ],
         ],
     ],
