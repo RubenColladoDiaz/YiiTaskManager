@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Task;
 use yii\web\Controller;
+use Yii;
 
 /**
  * Como se conecta el controller con la view?
@@ -51,5 +52,56 @@ class TaskController extends Controller
         return $this->render('index', [
             'tasks' => $tasks
         ]);
+    }
+
+    public function actionCreate()
+    {
+        $model = new Task();
+
+        if ($this->request->isPost) {
+            // load asigna los campos recibidos a las propiedades correspondientes
+            // de model. Por seguridad, solo se asignan los atributos definidos en
+            // las rules
+            if ($model->load($this->request->post()) && $model->save()) {
+                // Mensaje de éxito opcional (Flash message)
+                Yii::$app->session->setFlash('success', 'Tarea creada correctamente');
+
+                // Redireccionar para evitar que reenvíen el formulario al recargar (PRG Pattern)
+                return $this->redirect(['index', 'id' => $model->id]);
+            }
+        }
+
+        return $this->render('create', ['model' => $model]);
+    }
+
+    public function actionUpdate(int $id)
+    {
+        $model = Task::findOne($id);
+        if ($model == null) {
+            Yii::$app->session->setFlash('error', 'Tarea no encontrada');
+            return $this->redirect(['index']);
+        }
+
+        if ($this->request->isPost) {
+            if ($model->load($this->request->post()) && $model->save()) {
+                Yii::$app->session->setFlash('success', 'Tarea actualizada correctamente');
+
+                return $this->redirect(['index']);
+            }
+        }
+
+        return $this->render('create', ['model' => $model]);
+    }
+
+    public function actionDelete(int $id)
+    {
+        $model = Task::findOne($id);
+        if ($model == null) {
+            Yii::$app->session->setFlash('error', 'Tarea no encontrada');
+            return $this->redirect(['index']);
+        }
+        $model->delete();
+
+        return $this->redirect(['index']);
     }
 }
