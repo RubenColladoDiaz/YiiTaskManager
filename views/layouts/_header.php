@@ -8,58 +8,41 @@ use yii\bootstrap5\Nav;
 use yii\bootstrap5\NavBar;
 use yii\helpers\Html;
 
+$this->registerCssFile(
+    '@web/css/header.css',
+    ['depends' => [\yii\bootstrap5\BootstrapAsset::class]]
+);
+
 $items = [
     [
-        'label' => 'Home',
-        'url' => ['/site/index'],
-    ],
-    [
-        'label' => 'About',
-        'url' => ['/site/about'],
-    ],
-    [
-        'label' => 'Contact',
-        'url' => ['/site/contact'],
-    ],
-    [
-        'label' => 'Login',
-        'url' => ['/site/login'],
-        'visible' => Yii::$app->user->isGuest,
-    ],
-    [
-        'label' => 'Logout (' . Html::encode(Yii::$app->user->identity?->username ?? '') . ')',
-        'url' => ['/site/logout'],
-        'linkOptions' => [
-            'data-method' => 'post',
-            'class' => 'nav-link logout',
-        ],
-        'visible' => !Yii::$app->user->isGuest,
-    ],
+        'label' => '<i class="bi bi-house"></i> Inicio',
+        'url' => ['/'],
+    ]
 ];
 
 ?>
+
 <header id="header">
-    <?php NavBar::begin(
-        [
-            'brandLabel' => Yii::$app->name,
-            'brandUrl' => Yii::$app->homeUrl,
-            'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
+
+    <?php
+    NavBar::begin([
+        'brandLabel' => '<span class="fw-semibold">✓ TaskManager</span>',
+        'brandUrl' => Yii::$app->homeUrl,
+        'options' => [
+            'class' => 'navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm',
         ],
-    ) ?>
-    <?= Nav::widget(
-        [
-            'options' => ['class' => 'navbar-nav me-auto'],
-            'encodeLabels' => false,
-            'items' => $items,
+        'containerOptions' => [
+            'class' => 'container app-container',
         ],
-    ) ?>
-    <?= Html::button(
-        '&#127769;',
-        [
-            'id' => 'theme-toggle',
-            'class' => 'btn btn-link nav-link fs-5',
-            'aria-label' => 'Switch to dark mode',
-        ],
-    ) ?>
-    <?php NavBar::end() ?>
+    ]);
+    ?>
+
+    <?= Nav::widget([
+        'options' => ['class' => 'navbar-nav ms-auto align-items-lg-center'],
+        'encodeLabels' => false,
+        'items' => $items,
+    ]) ?>
+
+    <?php NavBar::end(); ?>
+
 </header>

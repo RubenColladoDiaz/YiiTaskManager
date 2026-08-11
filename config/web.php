@@ -52,7 +52,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 // La URL "task/index" se puede usar para acceder a la acción index del TaskController
-                'tasks' => 'task/index',
+                '' => 'task/index',
                 'create-task' => 'task/create',
                 'task/update/<id:\d+>' => 'task/update',
                 'task/delete/<id:\d+>' => 'task/delete'
