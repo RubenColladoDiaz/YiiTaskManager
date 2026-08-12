@@ -40,6 +40,7 @@ class Task extends \yii\db\ActiveRecord
             [['title'], 'required'],
             [['description'], 'string'],
             [['priority'], 'integer'],
+            [['category_id'], 'integer'],
             [['due_date', 'created_at', 'updated_at'], 'safe'],
             [['title', 'status'], 'string', 'max' => 255],
         ];

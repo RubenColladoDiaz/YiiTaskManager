@@ -31,6 +31,11 @@ use yii\widgets\ActiveForm;
         'rows' => 5,
         'placeholder' => 'Describe the task...',
     ]) ?>
+    
+    <?= $form->field($model, 'category_id')->dropDownList(
+        $categoryOptions,
+        ['prompt' => 'Seleccione una categoria']
+    ) ?>
 
     <div class="d-flex justify-content-end gap-2 mt-4">
 

@@ -2,7 +2,9 @@
 
 namespace app\controllers;
 
+use app\models\Category;
 use app\models\Task;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use Yii;
 
@@ -71,7 +73,10 @@ class TaskController extends Controller
             }
         }
 
-        return $this->render('create', ['model' => $model]);
+        $categories = Category::find()->all();
+        $categoryOptions = ArrayHelper::map($categories, 'id', 'name');
+
+        return $this->render('create', ['model' => $model, 'categoryOptions' => $categoryOptions]);
     }
 
     public function actionUpdate(int $id)
@@ -90,7 +95,10 @@ class TaskController extends Controller
             }
         }
 
-        return $this->render('create', ['model' => $model]);
+        $categories = Category::find()->all();
+        $categoryOptions = ArrayHelper::map($categories, 'id', 'name');
+
+        return $this->render('create', ['model' => $model, 'categoryOptions' => $categoryOptions]);
     }
 
     public function actionDelete(int $id)
