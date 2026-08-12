@@ -62,4 +62,9 @@ class Task extends \yii\db\ActiveRecord
         ];
     }
 
+    // Gracias a esto podemos hacer $task->category->name
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
+    }
 }

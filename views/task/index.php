@@ -38,8 +38,11 @@ use yii\helpers\Html;
             <div class="list-group-item d-flex justify-content-between align-items-center py-3">
 
                 <div>
-                    <h6 class="mb-1 fw-semibold">
+                    <h5 class="mb-1 fw-semibold">
                         <?= Html::encode($task->title) ?>
+                    </h5>
+                    <h6>
+                        <?= Html::encode($task->category->name) ?>
                     </h6>
                 </div>
 

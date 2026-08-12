@@ -50,4 +50,9 @@ class Category extends \yii\db\ActiveRecord
         ];
     }
 
+    public function getTasks()
+    {
+        // Todas las task cuya category_id coincida con nuestro id
+        return $this->hasMany(Task::class, ['category_id' => 'id']);
+    }
 }
