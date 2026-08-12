@@ -19,9 +19,11 @@ class m260810_210408_create_tasks_table extends Migration
             'status' => $this->string()->notNull()->defaultValue('pending'),
             'priority' => $this->integer()->notNull()->defaultValue(0),
             'due_date' => $this->dateTime(),
+            'category_id' => $this->integer(),
             'created_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
             'updated_at' => $this->dateTime()->notNull()->defaultExpression('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
         ]);
+        $this->addForeignKey('fk_task_category_id', 'tasks', 'category_id', 'categories', 'id');
     }
 
     /**
@@ -29,6 +31,7 @@ class m260810_210408_create_tasks_table extends Migration
      */
     public function safeDown()
     {
+        $this->dropForeignKey('fk_task_category_id', 'tasks');
         $this->dropTable('{{%tasks}}');
     }
 }

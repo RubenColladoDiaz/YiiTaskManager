@@ -56,7 +56,8 @@ $config = [
                 '' => 'task/index',
                 'create-task' => 'task/create',
                 'task/update/<id:\d+>' => 'task/update',
-                'task/delete/<id:\d+>' => 'task/delete'
+                'task/delete/<id:\d+>' => 'task/delete',
+                'task/pending' => 'task/pending-tasks',
             ],
         ],
     ],

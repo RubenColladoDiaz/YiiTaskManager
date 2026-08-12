@@ -104,4 +104,26 @@ class TaskController extends Controller
 
         return $this->redirect(['index']);
     }
+
+    public function actionPendingTasks()
+    {
+        $tasks = Task::find()->where(['status' => 'pending'])->andWhere(['>=', 'priority', 2])->orderBy(['priority' => SORT_DESC])->limit(3)->all();
+
+        return $this->render('index', ['tasks' => $tasks]);
+    }
+
+    public function actionSearch()
+    {
+        $title = Yii::$app->request->get('title');
+
+        if ($title === null) {
+            return $this->render('search');
+        }
+
+        $tasks = Task::find()->where(['like', 'title', $title])->all();
+
+        return $this->render('index', [
+            'tasks' => $tasks,
+        ]);
+    }
 }
