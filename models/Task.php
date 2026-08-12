@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-
 /**
  * This is the model class for table "tasks".
  *
@@ -57,6 +55,7 @@ class Task extends \yii\db\ActiveRecord
             'description' => 'Description',
             'status' => 'Status',
             'priority' => 'Priority',
+            'category_id' => 'Category',
             'due_date' => 'Due Date',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

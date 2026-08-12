@@ -17,6 +17,10 @@ $items = [
     [
         'label' => '<i class="bi bi-house"></i> Inicio',
         'url' => ['/'],
+    ],
+    [
+        'label' => '<i class="bi bi-house"></i> Search',
+        'url' => ['/task/search'],
     ]
 ];
 
