@@ -31,7 +31,13 @@ use yii\widgets\ActiveForm;
         'rows' => 5,
         'placeholder' => 'Describe the task...',
     ]) ?>
-    
+
+    <?= $form->field($model, 'priority')->textInput([
+        'maxlength' => true,
+        'placeholder' => 'Enter a number...',
+        'autofocus' => true,
+    ]) ?>
+
     <?= $form->field($model, 'category_id')->dropDownList(
         $categoryOptions,
         ['prompt' => 'Seleccione una categoria']

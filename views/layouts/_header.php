@@ -19,6 +19,10 @@ $items = [
         'url' => ['/'],
     ],
     [
+        'label' => '<i class="bi bi-house"></i> Pending',
+        'url' => ['/task/pending-tasks'],
+    ],
+    [
         'label' => '<i class="bi bi-house"></i> Search',
         'url' => ['/task/search'],
     ]

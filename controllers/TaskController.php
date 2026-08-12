@@ -49,7 +49,7 @@ class TaskController extends Controller
 {
     public function actionIndex()
     {
-        $tasks = Task::find()->all();
+        $tasks = Task::find()->orderBy(['priority' => SORT_DESC])->all();
 
         return $this->render('index', [
             'tasks' => $tasks
@@ -60,21 +60,12 @@ class TaskController extends Controller
     {
         $model = new Task();
 
-        if ($this->request->isPost) {
-            // load asigna los campos recibidos a las propiedades correspondientes
-            // de model. Por seguridad, solo se asignan los atributos definidos en
-            // las rules
-            if ($model->load($this->request->post()) && $model->save()) {
-                // Mensaje de éxito opcional (Flash message)
-                Yii::$app->session->setFlash('success', 'Tarea creada correctamente');
-
-                // Redireccionar para evitar que reenvíen el formulario al recargar (PRG Pattern)
-                return $this->redirect(['index', 'id' => $model->id]);
-            }
+        $response = $this->managePost($model, 'Tarea creada correctamente');
+        if ($response !== null) {
+            return $response;
         }
 
-        $categories = Category::find()->all();
-        $categoryOptions = ArrayHelper::map($categories, 'id', 'name');
+        $categoryOptions = $this->getCategoryOptions();
 
         return $this->render('create', ['model' => $model, 'categoryOptions' => $categoryOptions]);
     }
@@ -87,16 +78,12 @@ class TaskController extends Controller
             return $this->redirect(['index']);
         }
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                Yii::$app->session->setFlash('success', 'Tarea actualizada correctamente');
-
-                return $this->redirect(['index']);
-            }
+        $response = $this->managePost($model, 'Tarea actualizada correctamente');
+        if ($response !== null) {
+            return $response;
         }
 
-        $categories = Category::find()->all();
-        $categoryOptions = ArrayHelper::map($categories, 'id', 'name');
+        $categoryOptions = $this->getCategoryOptions();
 
         return $this->render('create', ['model' => $model, 'categoryOptions' => $categoryOptions]);
     }
@@ -133,5 +120,34 @@ class TaskController extends Controller
         return $this->render('index', [
             'tasks' => $tasks,
         ]);
+    }
+
+    private function managePost(Task $model, string $message)
+    {
+        if ($this->request->isPost) {
+            // load asigna los campos recibidos a las propiedades correspondientes
+            // de model. Por seguridad, solo se asignan los atributos definidos en
+            // las rules
+            if ($model->load($this->request->post()) && $model->save()) {
+                Yii::$app->session->setFlash('success', $message);
+
+                return $this->redirect(['index']);
+            }
+        }
+
+        return null;
+    }
+
+    private function getCategoryOptions()
+    {
+        $categories = Category::find()->all();
+        $categoryOptions = ArrayHelper::map($categories, 'id', 'name');
+
+        if ($categoryOptions == null) {
+            Yii::$app->session->setFlash('error', 'Error con las categorias');
+            return $this->redirect(['index']);
+        }
+
+        return $categoryOptions;
     }
 }
