@@ -2,6 +2,8 @@
 
 namespace app\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "tasks".
  *
@@ -14,7 +16,7 @@ namespace app\models;
  * @property string $created_at
  * @property string $updated_at
  */
-class Task extends \yii\db\ActiveRecord
+class Task extends ActiveRecord
 {
 
 

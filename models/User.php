@@ -1,97 +1,108 @@
 <?php
 
-declare(strict_types=1);
-
 namespace app\models;
 
-use yii\base\BaseObject;
+use Yii;
+use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
+use yii\behaviors\TimestampBehavior;
 
-class User extends BaseObject implements IdentityInterface
+/**
+ * This is the model class for table "users".
+ *
+ * @property int $id
+ * @property string $username
+ * @property string $password_hash
+ * @property string $auth_key
+ * @property string|null $access_token
+ * @property int $created_at
+ * @property int $updated_at
+ */
+class User extends ActiveRecord implements IdentityInterface
 {
-    public int|string $id = '';
-    public string $username = '';
-    public string $passwordHash = '';
-    public string $authKey = '';
-    public string $accessToken = '';
-    private static array $_users = [
-        '100' => [
-            'id' => '100',
-            'username' => 'admin',
-            // password: admin
-            'passwordHash' => '$2y$13$gYAywKSkhfZDq9FLNdm7buKnvlRxDexf5xipSMAxQPDUxpaptmZJu',
-            'authKey' => 'test100key',
-            'accessToken' => '100-token',
-        ],
-        '101' => [
-            'id' => '101',
-            'username' => 'demo',
-            // password: demo
-            'passwordHash' => '$2y$13$alRLq1PGVMlGYwS/Y3iy3ewQns1Z8ol8Iq6Zb5k7ZwEhblA1aL29y',
-            'authKey' => 'test101key',
-            'accessToken' => '101-token',
-        ],
-    ];
+    public function behaviors(): array
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                // Si tus campos en BD son enteros (UNIX timestamp) usa la configuración por defecto.
+                // Si usaste campos DATETIME o TIMESTAMP en la migración, descomenta la siguiente línea:
+                // 'value' => date('Y-m-d H:i:s'),
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
+    public static function tableName()
+    {
+        return 'users';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function rules()
+    {
+        return [
+            [['username', 'password_hash'], 'required'],
+            [['username'], 'unique'],
+            [['username', 'password_hash', 'access_token'], 'string', 'max' => 255],
+            [['auth_key'], 'string', 'max' => 32],
+            [['access_token'], 'default', 'value' => null],
+            [['created_at', 'updated_at'], 'safe'],
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Username',
+            'password_hash' => 'Password Hash',
+            'auth_key' => 'Auth Key',
+            'access_token' => 'Access Token',
+            'created_at' => 'Created At',
+            'updated_at' => 'Updated At',
+        ];
+    }
+
     public static function findIdentity($id): static|null
     {
-        return isset(self::$_users[$id]) ? new static(self::$_users[$id]) : null;
+        return static::findOne($id);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public static function findIdentityByAccessToken($token, $type = null): static|null
     {
-        foreach (self::$_users as $user) {
-            if ($user['accessToken'] === $token) {
-                return new static($user);
-            }
-        }
-
-        return null;
+        return static::findOne(['access_token' => $token]);
     }
 
-    /**
-     * Finds user by username
-     *
-     * @param string $username
-     * @return static|null
-     */
-    public static function findByUsername(string $username): static|null
-    {
-        foreach (self::$_users as $user) {
-            if (strcasecmp($user['username'], $username) === 0) {
-                return new static($user);
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getId(): int|string
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAuthKey(): string|null
     {
-        return $this->authKey;
+        return $this->auth_key;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function validateAuthKey($authKey): bool
     {
-        return $this->authKey === $authKey;
+        return $this->getAuthKey() === $authKey;
+    }
+
+    public static function findByUsername(string $username): static|null
+    {
+        return static::findOne(['username' => $username]);
+    }
+
+    public function validatePassword(string $password): bool
+    {
+        return Yii::$app->security->validatePassword($password, $this->password_hash);
     }
 }

@@ -25,8 +25,25 @@ $items = [
     [
         'label' => '<i class="bi bi-house"></i> Search',
         'url' => ['/task/search'],
-    ]
+    ],
 ];
+
+// Condicional para mostrar Login o Logout según el estado de la sesión
+if (Yii::$app->user->isGuest) {
+    $items[] = [
+        'label' => '<i class="bi bi-box-arrow-in-right"></i> Login',
+        'url' => ['/auth/login'],
+    ];
+} else {
+    $items[] = '<li class="nav-item">'
+        . Html::beginForm(['/auth/logout'], 'post', ['class' => 'd-flex'])
+        . Html::submitButton(
+            '<i class="bi bi-box-arrow-right"></i> Cerrar sesión (' . Html::encode(Yii::$app->user->identity->username) . ')',
+            ['class' => 'btn btn-link nav-link logout text-decoration-none']
+        )
+        . Html::endForm()
+        . '</li>';
+}
 
 ?>
 
