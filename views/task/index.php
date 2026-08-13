@@ -41,7 +41,7 @@ use yii\helpers\Html;
         <?php foreach ($tasks as $task): ?>
 
             <?php
-            // Prioridad
+            // Prioridad - match = switch en java
             $priorityClass = match ((int) $task->priority) {
                 1 => 'bg-secondary-subtle text-secondary',
                 2 => 'bg-warning-subtle text-warning-emphasis',
@@ -51,25 +51,25 @@ use yii\helpers\Html;
 
             // Status
             $statusClass = match (strtolower((string) $task->status)) {
-                'completed', 'completada', 'done' => 'bg-success text-white',
-                'in_progress', 'en_proceso', 'doing' => 'bg-primary text-white',
-                'pending', 'pendiente' => 'bg-warning text-dark',
+                'completed' => 'bg-success text-white',
+                'in_progress' => 'bg-primary text-white',
+                'pending' => 'bg-warning text-dark',
                 default => 'bg-secondary text-white'
             };
 
+            // ucfirst para poner la primera letra uppercase
             $statusLabel = ucfirst(str_replace('_', ' ', (string) $task->status));
 
             // Manejo y formato de due_date
             $isOverdue = false;
             $formattedDueDate = null;
-
             if (!empty($task->due_date)) {
                 $dueDateTimestamp = strtotime($task->due_date);
                 // Formato amigable: 13 Aug 2026, 15:30
                 $formattedDueDate = date('d M Y, H:i', $dueDateTimestamp);
 
                 // Comprobamos si está vencida (solo si no se ha completado)
-                $isCompleted = in_array(strtolower((string) $task->status), ['completed', 'completada', 'done']);
+                $isCompleted = in_array(strtolower((string) $task->status), ['completed']);
                 if ($dueDateTimestamp < time() && !$isCompleted) {
                     $isOverdue = true;
                 }

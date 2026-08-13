@@ -22,7 +22,7 @@ $this->registerCssFile(
             </div>
 
             <div class="footer-text">
-                Organiza tus tareas de forma simple y eficiente.
+                Organize your tasks in an efficient and simply way.
             </div>
 
         </div>
