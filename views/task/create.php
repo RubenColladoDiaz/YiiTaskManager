@@ -32,16 +32,22 @@ use yii\widgets\ActiveForm;
         'placeholder' => 'Describe the task...',
     ]) ?>
 
-    <?= $form->field($model, 'priority')->textInput([
-        'maxlength' => true,
-        'placeholder' => 'Enter a number...',
-        'autofocus' => true,
+    <?= $form->field($model, 'priority')->input('number', [
+        'min' => 0,
     ]) ?>
 
     <?= $form->field($model, 'category_id')->dropDownList(
         $categoryOptions,
         ['prompt' => 'Seleccione una categoria']
     ) ?>
+
+    <?= $form->field($model, 'status')->dropDownList([
+        'pending' => 'Pending',
+        'in_progress' => 'In Progress',
+        'completed' => 'Completed',
+    ]) ?>
+
+    <?= $form->field($model, 'due_date')->input('datetime-local') ?>
 
     <div class="d-flex justify-content-end gap-2 mt-4">
 

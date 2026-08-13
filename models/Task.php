@@ -37,10 +37,22 @@ class Task extends \yii\db\ActiveRecord
             [['priority'], 'default', 'value' => 0],
             [['title'], 'required'],
             [['description'], 'string'],
-            [['priority'], 'integer'],
+            [['priority'], 'integer', 'min' => 0],
             [['category_id'], 'integer'],
             [['due_date', 'created_at', 'updated_at'], 'safe'],
             [['title', 'status'], 'string', 'max' => 255],
+            [['status'], 'in', 'range' => ['pending', 'in_progress', 'completed']],
+            [['category_id'], 'exist', 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
+            [
+                ['due_date'],
+                'required',
+                'when' => function ($model) {
+                    return $model->status !== 'completed' && empty($model->due_date);
+                },
+                'whenClient' => "function (attribute, value) {
+                    return $('#task-status').val() !== 'completed';
+                }"
+            ]
         ];
     }
 
