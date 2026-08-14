@@ -26,6 +26,10 @@ $items = [
         'label' => '<i class="bi bi-house"></i> Search',
         'url' => ['/task/search'],
     ],
+    [
+        'label' => '<i class="bi bi-house"></i> ActiveDataProvider',
+        'url' => ['/task/active-data-provider'],
+    ],
 ];
 
 // Condicional para mostrar Login o Logout según el estado de la sesión

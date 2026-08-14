@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\Category;
 use app\models\Task;
+use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use Yii;
@@ -149,5 +150,32 @@ class TaskController extends Controller
         }
 
         return $categoryOptions;
+    }
+
+    // Construir la consulta poco a poco, mas flexible
+    private function queryExercice()
+    {
+        $query = Task::find();
+        $query->where(['status' => 'pending']);
+        $query->orderBy(['priority' => SORT_DESC]);
+        $tasks = $query->all();
+
+        return $tasks;
+    }
+
+    public function actionActiveDataProvider()
+    {
+        $query = Task::find();
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => 3,
+            ],
+        ]);
+
+        return $this->render('activeDataProvider', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }
