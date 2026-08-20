@@ -38,7 +38,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'category_id')->dropDownList(
         $categoryOptions,
-        ['prompt' => 'Select a category']
+        ['prompt' => 'No category']
     ) ?>
 
     <?= $form->field($model, 'status')->dropDownList([

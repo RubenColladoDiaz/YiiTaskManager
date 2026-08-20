@@ -3,7 +3,7 @@
 return [
     'class' => \yii\db\Connection::class,
     'dsn' => 'mysql:host=localhost;dbname=taskmanager',
-    'username' => 'rcollado',
+    'username' => 'root',
     'password' => 'super3',
     'charset' => 'utf8',
 
