@@ -7,6 +7,7 @@ use app\models\Task;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
+use app\models\TaskSearch;
 use Yii;
 
 /**
@@ -152,6 +153,31 @@ class TaskController extends Controller
         return $categoryOptions;
     }
 
+    private function getStatusOptions()
+    {
+        $statusOptions = [
+            'pending' => 'Pending',
+            'in_progress' => 'In Progress',
+            'completed' => 'Completed',
+        ];
+
+        return $statusOptions;
+    }
+
+    private function getPriorityOptions()
+    {
+        $priorityOptions = [
+            0 => 'Very Low',
+            1 => 'Low',
+            2 => 'Medium',
+            3 => 'High',
+            4 => 'Very High',
+            5 => 'Essential',
+        ];
+
+        return $priorityOptions;
+    }
+
     // Construir la consulta poco a poco, mas flexible
     private function queryExercice()
     {
@@ -176,6 +202,27 @@ class TaskController extends Controller
 
         return $this->render('activeDataProvider', [
             'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    public function actionSearchAdvanced()
+    {
+        $searchModel = new TaskSearch();
+
+        $dataProvider = $searchModel->search(
+            Yii::$app->request->queryParams
+        );
+
+        $categories = $this->getCategoryOptions();
+        $statuses = $this->getStatusOptions();
+        $priorities = $this->getPriorityOptions();
+
+        return $this->render('search-advanced', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+            'categories' => $categories,
+            'statuses' => $statuses,
+            'priorities' => $priorities
         ]);
     }
 }
