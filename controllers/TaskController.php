@@ -8,6 +8,7 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use app\models\TaskSearch;
+use yii\widgets\DetailView;
 use Yii;
 
 /**
@@ -100,6 +101,14 @@ class TaskController extends Controller
         $model->delete();
 
         return $this->redirect(['index']);
+    }
+    public function actionView(int $id)
+    {
+        $model = Task::findOne($id);
+
+        return $this->render('view', [
+            'model' => $model,
+        ]);
     }
 
     public function actionPendingTasks()

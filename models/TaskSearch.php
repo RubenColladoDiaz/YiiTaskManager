@@ -6,7 +6,7 @@ use yii\data\ActiveDataProvider;
 
 class TaskSearch extends Task
 {
-    public $categoryName;
+    // public $categoryName;
 
     public function rules()
     {
@@ -34,11 +34,11 @@ class TaskSearch extends Task
 
         $query->joinWith('category');
 
-        $query->andFilterWhere([
-            'like',
-            'categories.name',
-            $this->categoryName
-        ]);
+        // $query->andFilterWhere([
+        //     'like',
+        //     'categories.name',
+        //     $this->categoryName
+        // ]);
 
         $query->andFilterWhere([
             'status' => $this->status,

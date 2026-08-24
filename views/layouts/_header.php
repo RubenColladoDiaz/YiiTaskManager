@@ -15,7 +15,7 @@ $this->registerCssFile(
 
 $items = [
     [
-        'label' => '<i class="bi bi-house"></i> Inicio',
+        'label' => '<i class="bi bi-house"></i> Home',
         'url' => ['/'],
     ],
     [
@@ -29,6 +29,10 @@ $items = [
     [
         'label' => '<i class="bi bi-house"></i> ActiveDataProvider',
         'url' => ['/task/active-data-provider'],
+    ],
+    [
+        'label' => '<i class="bi bi-house"></i> Advanced Search',
+        'url' => ['/task/search-advanced'],
     ],
 ];
 

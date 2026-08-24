@@ -1,7 +1,7 @@
 <?php
 
-use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
+use yii\grid\ActionColumn;
 
 /** @var app\models\TaskSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
@@ -37,6 +37,9 @@ use yii\grid\GridView;
                 };
             },
             'filter' => $priorities,
+        ],
+        [
+            'class' => ActionColumn::class,
         ],
     ],
 ]) ?>
