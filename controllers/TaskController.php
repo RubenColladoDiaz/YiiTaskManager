@@ -8,7 +8,7 @@ use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use app\models\TaskSearch;
-use yii\widgets\DetailView;
+use yii\filters\AccessControl;
 use Yii;
 
 /**
@@ -50,6 +50,42 @@ use Yii;
 
 class TaskController extends Controller
 {
+    /*
+    @ → usuario autenticado.
+    ? → usuario invitado.
+    */
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => [
+                            'index',
+                            'view',
+                        ],
+                        'roles' => ['?', '@'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => [
+                            'create',
+                            'update',
+                            'delete',
+                            'search',
+                            'active-data-provider',
+                            'pending-tasks',
+                            'search-advanced',
+                        ],
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     public function actionIndex()
     {
         $tasks = Task::find()->orderBy(['priority' => SORT_DESC])->all();
