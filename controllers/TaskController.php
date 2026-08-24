@@ -12,6 +12,8 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use Yii;
 
+use app\services\TaskService;
+
 /**
  * Como se conecta el controller con la view?
  * Nosotros usamos http://localhost:8080/index.php?r=task/index
@@ -137,15 +139,19 @@ class TaskController extends Controller
 
     public function actionDelete(int $id)
     {
+        $service = new TaskService();
         $model = Task::findOne($id);
+
         if ($model == null) {
             Yii::$app->session->setFlash('error', 'Tarea no encontrada');
             return $this->redirect(['index']);
         }
-        $model->delete();
+
+        $service->delete($model);
 
         return $this->redirect(['index']);
     }
+
     public function actionView(int $id)
     {
         $model = Task::findOne($id);
