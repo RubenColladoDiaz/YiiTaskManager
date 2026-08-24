@@ -9,6 +9,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use app\models\TaskSearch;
 use yii\filters\AccessControl;
+use yii\filters\VerbFilter;
 use Yii;
 
 /**
@@ -81,6 +82,13 @@ class TaskController extends Controller
                         ],
                         'roles' => ['@'],
                     ],
+                ],
+            ],
+            // No queremos que alguien haga un delete mediante peticion GET por url
+            'verbs' => [
+                'class' => VerbFilter::class,
+                'actions' => [
+                    'delete' => ['POST'],
                 ],
             ],
         ];
