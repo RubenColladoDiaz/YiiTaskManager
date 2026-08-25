@@ -2,7 +2,6 @@
 
 namespace app\controllers;
 
-use app\models\Category;
 use app\models\Task;
 use yii\data\ActiveDataProvider;
 use yii\helpers\ArrayHelper;
@@ -10,9 +9,11 @@ use yii\web\Controller;
 use app\models\TaskSearch;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\web\NotFoundHttpException;
 use Yii;
 
 use app\services\TaskService;
+use app\constants\TaskStatus;
 
 /**
  * Como se conecta el controller con la view?
@@ -53,6 +54,19 @@ use app\services\TaskService;
 
 class TaskController extends Controller
 {
+    private TaskService $taskService;
+
+    public function __construct(
+        $id,
+        $module,
+        TaskService $taskService,
+        $config = []
+    ) {
+        $this->taskService = $taskService;
+
+        parent::__construct($id, $module, $config);
+    }
+
     /*
     @ → usuario autenticado.
     ? → usuario invitado.
@@ -98,7 +112,7 @@ class TaskController extends Controller
 
     public function actionIndex()
     {
-        $tasks = Task::find()->orderBy(['priority' => SORT_DESC])->all();
+        $tasks = $this->taskService->getAllTasks();
 
         return $this->render('index', [
             'tasks' => $tasks
@@ -109,9 +123,9 @@ class TaskController extends Controller
     {
         $model = new Task();
 
-        $response = $this->managePost($model, 'Tarea creada correctamente');
-        if ($response !== null) {
-            return $response;
+        if ($this->taskService->save($model, $this->request->post())) {
+            Yii::$app->session->setFlash('success', 'Task created successfully');
+            return $this->redirect(['index']);
         }
 
         $categoryOptions = $this->getCategoryOptions();
@@ -121,15 +135,15 @@ class TaskController extends Controller
 
     public function actionUpdate(int $id)
     {
-        $model = Task::findOne($id);
+        $model = $this->taskService->findTaskById($id);
         if ($model == null) {
             Yii::$app->session->setFlash('error', 'Tarea no encontrada');
             return $this->redirect(['index']);
         }
 
-        $response = $this->managePost($model, 'Tarea actualizada correctamente');
-        if ($response !== null) {
-            return $response;
+        if ($this->taskService->save($model, $this->request->post())) {
+            Yii::$app->session->setFlash('success', 'Task updated successfully');
+            return $this->redirect(['index']);
         }
 
         $categoryOptions = $this->getCategoryOptions();
@@ -139,22 +153,35 @@ class TaskController extends Controller
 
     public function actionDelete(int $id)
     {
-        $service = new TaskService();
-        $model = Task::findOne($id);
+        $model = $this->taskService->findTaskById($id);
 
         if ($model == null) {
             Yii::$app->session->setFlash('error', 'Tarea no encontrada');
             return $this->redirect(['index']);
         }
 
-        $service->delete($model);
+        if ($this->taskService->delete($model)) {
+            Yii::$app->session->setFlash(
+                'success',
+                'Task deleted successfully'
+            );
+        } else {
+            Yii::$app->session->setFlash(
+                'error',
+                'Could not delete task'
+            );
+        }
 
         return $this->redirect(['index']);
     }
 
     public function actionView(int $id)
     {
-        $model = Task::findOne($id);
+        $model = $this->taskService->findTaskById($id);
+
+        if ($model == null) {
+            throw new NotFoundHttpException('Task not found');
+        }
 
         return $this->render('view', [
             'model' => $model,
@@ -163,45 +190,29 @@ class TaskController extends Controller
 
     public function actionPendingTasks()
     {
-        $tasks = Task::find()->where(['status' => 'pending'])->andWhere(['>=', 'priority', 2])->orderBy(['priority' => SORT_DESC])->limit(3)->all();
+        $tasks = $this->taskService->getPendingTasks();
 
         return $this->render('index', ['tasks' => $tasks]);
     }
 
     public function actionSearch()
     {
-        $title = Yii::$app->request->get('title');
+        $title = $this->request->get('title');
 
         if ($title === null) {
             return $this->render('search');
         }
 
-        $tasks = Task::find()->where(['like', 'title', $title])->all();
+        $tasks = $this->taskService->findTasksByTitle($title);
 
         return $this->render('index', [
             'tasks' => $tasks,
         ]);
     }
 
-    private function managePost(Task $model, string $message)
-    {
-        if ($this->request->isPost) {
-            // load asigna los campos recibidos a las propiedades correspondientes
-            // de model. Por seguridad, solo se asignan los atributos definidos en
-            // las rules
-            if ($model->load($this->request->post()) && $model->save()) {
-                Yii::$app->session->setFlash('success', $message);
-
-                return $this->redirect(['index']);
-            }
-        }
-
-        return null;
-    }
-
     private function getCategoryOptions()
     {
-        $categories = Category::find()->all();
+        $categories = $this->taskService->getAllCategories();
         $categoryOptions = ArrayHelper::map($categories, 'id', 'name');
 
         if ($categoryOptions == null) {
@@ -214,13 +225,11 @@ class TaskController extends Controller
 
     private function getStatusOptions()
     {
-        $statusOptions = [
-            'pending' => 'Pending',
-            'in_progress' => 'In Progress',
-            'completed' => 'Completed',
+        return [
+            TaskStatus::PENDING => 'Pending',
+            TaskStatus::IN_PROGRESS => 'In Progress',
+            TaskStatus::COMPLETED => 'Completed',
         ];
-
-        return $statusOptions;
     }
 
     private function getPriorityOptions()
@@ -235,17 +244,6 @@ class TaskController extends Controller
         ];
 
         return $priorityOptions;
-    }
-
-    // Construir la consulta poco a poco, mas flexible
-    private function queryExercice()
-    {
-        $query = Task::find();
-        $query->where(['status' => 'pending']);
-        $query->orderBy(['priority' => SORT_DESC]);
-        $tasks = $query->all();
-
-        return $tasks;
     }
 
     public function actionActiveDataProvider()

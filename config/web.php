@@ -10,6 +10,9 @@ $config = [
     'bootstrap' => ['log'],
     'container' => [
         'singletons' => [
+            \app\services\TaskService::class => [
+                'class' => \app\services\TaskService::class,
+            ],
             \yii\mail\MailerInterface::class => [
                 'class' => \yii\symfonymailer\Mailer::class,
                 // send all mails to a file by default.
