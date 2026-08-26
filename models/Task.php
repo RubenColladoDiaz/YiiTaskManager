@@ -3,6 +3,8 @@
 namespace app\models;
 
 use yii\db\ActiveRecord;
+use yii\behaviors\TimestampBehavior;
+use yii\db\Expression;
 
 /**
  * This is the model class for table "tasks".
@@ -28,6 +30,16 @@ class Task extends ActiveRecord
         return 'tasks';
     }
 
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => TimestampBehavior::class,
+                'value' => new Expression('NOW()'),
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -41,7 +53,7 @@ class Task extends ActiveRecord
             [['description'], 'string'],
             [['priority'], 'integer', 'min' => 0],
             [['category_id'], 'integer'],
-            [['due_date', 'created_at', 'updated_at'], 'safe'],
+            [['due_date'], 'safe'],
             [['title', 'status'], 'string', 'max' => 255],
             [['status'], 'in', 'range' => ['pending', 'in_progress', 'completed']],
             [['category_id'], 'exist', 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
