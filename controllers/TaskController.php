@@ -14,6 +14,7 @@ use Yii;
 
 use app\services\TaskService;
 use app\constants\TaskStatus;
+use app\constants\TaskPriority;
 
 /**
  * Como se conecta el controller con la view?
@@ -137,7 +138,7 @@ class TaskController extends Controller
     {
         $model = $this->taskService->findTaskById($id);
         if ($model == null) {
-            Yii::$app->session->setFlash('error', 'Tarea no encontrada');
+            Yii::$app->session->setFlash('error', 'Task not found');
             return $this->redirect(['index']);
         }
 
@@ -156,7 +157,7 @@ class TaskController extends Controller
         $model = $this->taskService->findTaskById($id);
 
         if ($model == null) {
-            Yii::$app->session->setFlash('error', 'Tarea no encontrada');
+            Yii::$app->session->setFlash('error', 'Task not found');
             return $this->redirect(['index']);
         }
 
@@ -216,34 +217,11 @@ class TaskController extends Controller
         $categoryOptions = ArrayHelper::map($categories, 'id', 'name');
 
         if ($categoryOptions == null) {
-            Yii::$app->session->setFlash('error', 'Error con las categorias');
+            Yii::$app->session->setFlash('error', 'Error in categories');
             return $this->redirect(['index']);
         }
 
         return $categoryOptions;
-    }
-
-    private function getStatusOptions()
-    {
-        return [
-            TaskStatus::PENDING => 'Pending',
-            TaskStatus::IN_PROGRESS => 'In Progress',
-            TaskStatus::COMPLETED => 'Completed',
-        ];
-    }
-
-    private function getPriorityOptions()
-    {
-        $priorityOptions = [
-            0 => 'Very Low',
-            1 => 'Low',
-            2 => 'Medium',
-            3 => 'High',
-            4 => 'Very High',
-            5 => 'Essential',
-        ];
-
-        return $priorityOptions;
     }
 
     public function actionActiveDataProvider()
@@ -271,8 +249,8 @@ class TaskController extends Controller
         );
 
         $categories = $this->getCategoryOptions();
-        $statuses = $this->getStatusOptions();
-        $priorities = $this->getPriorityOptions();
+        $statuses = TaskStatus::options();
+        $priorities = TaskPriority::options();
 
         return $this->render('search-advanced', [
             'searchModel' => $searchModel,
